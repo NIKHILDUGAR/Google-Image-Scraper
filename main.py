@@ -21,7 +21,10 @@ chrome_options.add_argument("--incognito")
 driver=webdriver.Chrome(executable_path="chromedriver.exe")
 driver.get(searchurl)
 import time
-save_path = 'D://example//'
+if not os.path.exists("D://images"):
+    os.mkdir("D://images")
+save_path = 'D://images//'
+
 completeName = os.path.join(save_path,sear)
 if not os.path.exists(completeName):
     os.mkdir(completeName)
@@ -54,7 +57,7 @@ driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 src=driver.page_source
 driver.close()
 page_soup = soup(src, "lxml")
-j = os.path.join('D://example', sear)
+j = os.path.join('D://images', sear)
 linkcontainers = page_soup.findAll("img", {"class": "rg_i Q4LuWd tx8vtf"})
 namecontainers=page_soup.findAll("div", {"class": "bRMDJf islir"})
 n_images=min(n_images,len(namecontainers))
@@ -91,5 +94,5 @@ for i in range(n_images):
         print("If you are seeing this then email me at nikhil4709@gmail.com Thank you!")
         print(linkcontainers[i])
     f.close()
-    print("Downloaded images till now - ", i+1)
+    print(i+1," Images downloaded till now")
 print('Done')
