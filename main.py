@@ -1,24 +1,39 @@
 #This program uses web scraping to download images from google image search instantly and can be helpful in making image datasets.
-#This uses web scraping and Selenium to scroll the webpage and get more images. Do not close the browser window that pops up, 
-#it will close automatically. The images will be labelled 1.jpg,2.jpg,3.jpg and so on or by the item names given on Google 
+#This uses web scraping and Selenium to scroll the webpage and get more images. Do not close the browser window that pops up,
+#it will close automatically. The images will be labelled 1.jpg, 2.jpg, 3.jpg and so on or by the item names given on Google
 #and will be download in a folder with the same name as what you have searched.
-#NOTE:- THIS PROGRAM ASSUMES YOU HAVE CHROME VERSION 83 AS YOUR BROWSER AND YOU HAVE THE chromedriver.exe TOO FROM GITHUB INSTEAD OF JUST THIS PROGRAM ELSE IT WILL NOT WORK.
+#NOTE:- THIS PROGRAM ASSUMES YOU HAVE CHROME VERSION 83 OR MOZILLA FIREFOX AS YOUR BROWSER AND YOU HAVE THE chromedriver.exe
+# OR THE gecko driver.exe IF YOU HAVE FIREFOX
+#TOO FROM GITHUB INSTEAD OF JUST THIS PROGRAM ELSE IT WILL NOT WORK.
 
-
+import warnings
+warnings.filterwarnings("ignore")
 import os
 import re
 import urllib.request
 from selenium import webdriver
 from bs4 import BeautifulSoup as soup
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 sear = input('What are you looking for? ')
 n_images = int(input('How many images do you want? '))
 saveby= int(input("Do you want to save files by item names(enter 0) or ordered numbers(enter 1)? "))
 GOOGLE_IMAGE = 'https://www.google.com/search?site=&tbm=isch&source=hp&biw=1873&bih=990&'
 searchurl = GOOGLE_IMAGE + 'q=' + sear.replace(" ","+")
 print(searchurl)
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--incognito")
-driver=webdriver.Chrome(executable_path="chromedriver.exe")
+try:
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--incognito")
+    driver=webdriver.Chrome(executable_path="chromedriver.exe")
+except:
+    binary: str = r'C:\Program Files\Mozilla Firefox\firefox.exe'
+    options = Options()
+    # noinspection PyDeprecation
+    options.set_headless(headless=True)
+    options.binary = binary
+    cap = DesiredCapabilities().FIREFOX
+    cap["marionette"] = True #optional
+    driver = webdriver.Firefox(firefox_options=options, capabilities=cap, executable_path="geckodriver.exe")
 driver.get(searchurl)
 import time
 if not os.path.exists("D://images"):
@@ -28,7 +43,6 @@ save_path = 'D://images//'
 completeName = os.path.join(save_path,sear)
 if not os.path.exists(completeName):
     os.mkdir(completeName)
-# print(driver.title)
 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 time.sleep(2)
 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
